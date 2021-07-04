@@ -1,47 +1,3 @@
-# Creating Markdown Files and turning them into JSX for React
-
-[Markdown Documentation](https://www.markdownguide.org/)
-
-[react-markdown Documentation](https://www.npmjs.com/package/react-markdown)
-
-```
-$ npm install react-markdown
-```
-
--   Importing into your project
-
-```javascript
-import ReactMarkdown from 'react-markdown';
-
-<ReactMarkdown>{DUMMY_POST.content}</ReactMarkdown>;
-```
-
--   You can add metadata (gray matter) to a markdown file in the following way:
-
-```
----
-title: 'Getting Started with NextJS'
-date: '2022-10-15'
-image: 'getting-started-nextjs.png'
-excerpt: 'NextJS is a React framework for production - it makes building fullstack React Apps a breeze and ships with SSR'
-isFeatured: true
----
-
-# This is a title
-
-This is some regular text with a [link](https://google.com)
-
-```
-
-_metadata is done in yml format, be sure to do three dashes to close the metadata section_
-
--   Next, to parse metadata add the graymatter library to your app
-
-```
-$ npm install gray-matter
-```
-
-```javascript
 import fs from 'fs';
 import path from 'path';
 
@@ -91,4 +47,3 @@ export const getFeaturedPosts = () => {
 
     return featuredPosts;
 };
-```
