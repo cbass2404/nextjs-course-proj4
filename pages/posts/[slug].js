@@ -1,9 +1,7 @@
-const PostDetailPage = () => {
-    return (
-        <div>
-            <h1>PostDetailPage</h1>
-        </div>
-    );
+import PostContent from '../../components/posts/post-detail/post-content';
+
+const PostDetailPage = (props) => {
+    return <PostContent />;
 };
 
 export default PostDetailPage;
