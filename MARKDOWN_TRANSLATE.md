@@ -92,3 +92,45 @@ export const getFeaturedPosts = () => {
     return featuredPosts;
 };
 ```
+
+## Configuring ReactMarkdown
+
+-   To make full use of nextjs' image optimization and lazy loading you have to tell markdown to render it another way as follows:
+
+```javascript
+import Image from 'next/image';
+import ReactMarkdown from 'react-markdown';
+
+import classes from './post-content.module.css';
+import PostHeader from './post-header';
+
+const PostContent = (props) => {
+    const { slug, image, content, title } = props.post;
+
+    const imagePath = `/images/posts/${slug}/${image}`;
+
+    const customRenderers = {
+        image(image) {
+            return (
+                <Image
+                    src={`/images/posts/${slug}/${image.src}`}
+                    alt={image.alt}
+                    width={600}
+                    height={300}
+                />
+            );
+        },
+    };
+
+    return (
+        <article className={classes.content}>
+            <PostHeader title={title} image={imagePath} />
+            <ReactMarkdown renderers={customRenderers}>{content}</ReactMarkdown>
+        </article>
+    );
+};
+
+export default PostContent;
+```
+
+_renderers prop lets you target different Markdown elements to change how they work_
