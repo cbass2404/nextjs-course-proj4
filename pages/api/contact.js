@@ -24,7 +24,11 @@ const handler = (req, res) => {
             message,
         };
 
-        res.status(201).json({ message: 'Successfully stored message' });
+        console.log(newMessage);
+
+        res.status(201).json({
+            message: 'Successfully stored message',
+        });
     }
 };
 
