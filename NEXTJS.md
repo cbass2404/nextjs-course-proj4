@@ -1713,3 +1713,30 @@ export default Notification;
 ```
 
 ## Deploying NextJS Applications
+
+-   Different Deployment Options
+
+    -   standard build
+
+        -   run next build command
+        -   produces an optimized production bundle and a server-side app
+            _requires nodejs server_
+        -   pages will still be pre-rendered (if possible) without a nodejs server, however... nodejs is required for API routes, server-side pages and page revalidations
+        -   redeploy needed if code changes or you don't use revalidations and need page updates
+
+    -   full static build
+        -   run next export command
+        -   produces 100% static app (HTML, CSS, JS)
+        -   NO nodejs server required
+        -   does not work if your app uses api routes, server-side pages or wants to use page revalidations
+        -   re-deploy needed for all code and content changes
+
+-   How to configure and prepare the project
+    1. add page metadata, optimize code, remove unnecessary dependencies
+    2. use environment variables for variable data (e.g. database credentials, API keys, ...)
+    3. do a test build and test the production-ready app locally or on some test server
+    4. deploy!
+
+### Configuring NextJS for deployment
+
+[NextJS Configuration Documentation](https://nextjs.org/docs/api-reference/next.config.js/introduction)

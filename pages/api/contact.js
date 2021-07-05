@@ -1,7 +1,6 @@
-import { isValidInput, isValidEmail } from '../../helper/validateInput';
-import { keys } from '../../config/keys';
-
 import { MongoClient } from 'mongodb';
+
+import { isValidInput, isValidEmail } from '../../helper/validateInput';
 
 const handler = async (req, res) => {
     if (req.method === 'POST') {
@@ -29,8 +28,12 @@ const handler = async (req, res) => {
 
         let client;
 
+        const connectionString = `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_CLUSTER}.wbszx.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`;
+
         try {
-            client = await MongoClient.connect(keys.MONGO_URI);
+            client = await MongoClient.connect(connectionString, {
+                useUnifiedTopology: true,
+            });
         } catch (error) {
             res.status(500).json({
                 message: 'Failed to connect to database...',
