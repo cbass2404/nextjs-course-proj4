@@ -1654,3 +1654,5 @@ fetch('/api/newsletter-signup', {
         });
     });
 ```
+
+## Deploying NextJS Applications
