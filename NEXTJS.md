@@ -1740,3 +1740,32 @@ export default Notification;
 ### Configuring NextJS for deployment
 
 [NextJS Configuration Documentation](https://nextjs.org/docs/api-reference/next.config.js/introduction)
+
+```js
+const { PHASE_DEVELOPMENT_SERVER } = require('next/constants');
+
+module.exports = () => {
+    if (PHASE_DEVELOPMENT_SERVER) {
+        return {
+            env: {
+                MONGO_USERNAME: 'admin',
+                MONGO_PASSWORD: 'password',
+                MONGO_CLUSTER: 'cluster0',
+                MONGO_DB: 'contacts-dev',
+            },
+        };
+    }
+    return {
+        env: {
+            MONGO_USERNAME: 'admin',
+            MONGO_PASSWORD: 'password',
+            MONGO_CLUSTER: 'cluster0',
+            MONGO_DB: 'contacts',
+        },
+    };
+};
+```
+
+or use .env.local for local environment variables
+
+-   next run npm build and check that none of the file sizes are marked in red, if so try to optimize that file
