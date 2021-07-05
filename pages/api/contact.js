@@ -1,6 +1,9 @@
 import { isValidInput, isValidEmail } from '../../helper/validateInput';
+import { keys } from '../../config/keys';
 
-const handler = (req, res) => {
+import { MongoClient } from 'mongodb';
+
+const handler = async (req, res) => {
     if (req.method === 'POST') {
         const { email, name, message } = req.body;
 
@@ -24,11 +27,32 @@ const handler = (req, res) => {
             message,
         };
 
-        console.log(newMessage);
+        let client;
 
-        res.status(201).json({
-            message: 'Successfully stored message',
-        });
+        try {
+            client = await MongoClient.connect(keys.MONGO_URI);
+        } catch (error) {
+            res.status(500).json({
+                message: 'Failed to connect to database...',
+            });
+            return;
+        }
+
+        const db = client.db();
+
+        try {
+            await db.collection('messages').insertOne(newMessage);
+
+            res.status(201).json({
+                message: 'Successfully sent message!',
+            });
+        } catch (error) {
+            res.status(500).json({ message: 'Failed to save message...' });
+            client.close();
+            return;
+        }
+
+        client.close();
     }
 };
 

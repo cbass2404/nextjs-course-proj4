@@ -1,13 +1,49 @@
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
+
 import classes from './contact-form.module.css';
+import Notification from '../ui/notification';
+
+const sendContactData = async (contactDetails) => {
+    const response = await fetch('/api/contact', {
+        method: 'POST',
+        body: JSON.stringify(contactDetails),
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+        throw new Error(response.message || 'Something went wrong!');
+    }
+
+    return result;
+};
 
 const ContactForm = () => {
+    const [requestStatus, setRequestStatus] = useState();
+    const [requestMessage, setRequestMessage] = useState();
+
     const emailRef = useRef();
     const nameRef = useRef();
     const messageRef = useRef();
 
-    const handleSubmit = (event) => {
+    useEffect(() => {
+        if (requestStatus === 'success' || requestStatus === 'error') {
+            const timer = setTimeout(() => {
+                setRequestStatus(null);
+                setRequestMessage(null);
+            }, 3000);
+
+            return () => clearTimeout(timer);
+        }
+    }, [requestStatus]);
+
+    const handleSubmit = async (event) => {
         event.preventDefault();
+
+        setRequestStatus('pending');
 
         const reqBody = {
             email: emailRef.current.value,
@@ -15,29 +51,49 @@ const ContactForm = () => {
             message: messageRef.current.value,
         };
 
-        fetch('/api/contact', {
-            method: 'POST',
-            body: JSON.stringify(reqBody),
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-            .then((res) => {
-                if (res.ok) {
-                    return res.json();
-                }
+        try {
+            const result = await sendContactData(reqBody);
 
-                return res.json().then((data) => {
-                    throw new Error(data.message || 'Something went wrong...');
-                });
-            })
-            .then((data) => {
-                console.log(data.message);
-            })
-            .catch((error) => {
-                console.log(error.message || 'Something went wrong...');
-            });
+            console.log(result);
+
+            setRequestStatus('success');
+            setRequestMessage(result.message);
+
+            emailRef.current.value = '';
+            nameRef.current.value = '';
+            messageRef.current.value = '';
+        } catch (error) {
+            console.log(error);
+            setRequestStatus('error');
+            setRequestMessage(error.message || 'Something went wrong...');
+        }
     };
+
+    let notification;
+
+    if (requestStatus === 'pending') {
+        notification = {
+            status: 'pending',
+            title: 'Sending message...',
+            message: 'Your message is on its way!',
+        };
+    }
+
+    if (requestStatus === 'success') {
+        notification = {
+            status: 'success',
+            title: 'Success',
+            message: requestMessage,
+        };
+    }
+
+    if (requestStatus === 'error') {
+        notification = {
+            status: 'error',
+            title: 'Error!',
+            message: requestMessage,
+        };
+    }
 
     return (
         <section className={classes.contact}>
@@ -67,6 +123,13 @@ const ContactForm = () => {
                     <button>Send Message</button>
                 </div>
             </form>
+            {notification && (
+                <Notification
+                    status={notification.status}
+                    title={notification.title}
+                    message={notification.message}
+                />
+            )}
         </section>
     );
 };
